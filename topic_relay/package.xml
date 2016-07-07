@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package>
+  <name>topic_relay</name>
+  <version>0.0.0</version>
+  <description>
+    The topic_relay package
+  	Subscribe to topics, keep memory of published data and latch them to another topic
+  </description>
+
+  <maintainer email="valentin.vergez@gmail.com">Valentin Vergez</maintainer>
+
+  <license>TODO</license>
+
+  <url type="repository">https://github.com/PyroTeam/node-supervise</url>
+  <url type="bugtracker">https://github.com/PyroTeam/node-supervise/issues</url>
+  <url type="website">https://github.com/PyroTeam/node-supervise/wiki</url>
+
+  <author email="valentin.vergez@gmail.com">Valentin Vergez</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>topic_tools</build_depend>
+
+  <run_depend>topic_tools</run_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- You can specify that this package is a metapackage here: -->
+    <!-- <metapackage/> -->
+
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

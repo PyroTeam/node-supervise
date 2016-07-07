@@ -1,0 +1,9 @@
+<launch>
+	<arg name="debug" default="false" />
+
+	<arg if="$(arg debug)" name="prefix" value="gdb -ex run --args" />
+	<arg unless="$(arg debug)" name="prefix" value="" />
+
+	<node pkg="topic_relay" name="topic_relay" type="topic_relay"
+		  output="screen" launch-prefix="$(arg prefix)"/>
+</launch>
