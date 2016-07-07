@@ -40,15 +40,16 @@ void chatterCallback(const supervizer::beacon::ConstPtr& msg)
 {
   ROS_INFO("I heard: [%s]", msg->data.c_str());
 }
-void reception()
+void reception(ros::NodeHandle* pN)
 {
-  ros::Subscriber sub = n.subscribe("beacon", 1000, chatterCallback);
+  ros::Subscriber sub = pN->subscribe("beacon", 1000, chatterCallback);
   ros::spin();
 
   
 }
 int main(int argc, char **argv)
 {
+  string nom,
 
   ros::init(argc, argv, "supervizer");
 
