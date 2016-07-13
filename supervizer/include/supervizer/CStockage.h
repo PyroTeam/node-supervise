@@ -3,24 +3,24 @@
 #include "std_msgs/Time.h"
 #include "std_msgs/Duration.h"
 #include <cstdio>
-#include "topic_tools/shape_shifter.h"
-#include "topic_tools/parse.h"
+
 
 #include <sstream>
 using std::string;
 using std::vector;
 using namespace topic_tools;
 
-ros::NodeHandle *g_node = NULL;
 class CStockage{
-private:
+ private:
   string m_sName, m_sTopic_In, m_sTopic_Out;
   bool m_bState;
   std_msgs::Time m_tTps_Reception;
   std_msgs::Duration m_dDead_line;
   ros::Publisher m_pubEch;
   ros::Subscriber m_subEch;
-public:
+  ros::NodeHandle m_nohNode;
+  
+ public:
   CStockage(void);
   CStockage(string, string, );
   ~CStockage(void);

@@ -6,7 +6,12 @@ CStockage(void)
   m_tTps_Reception.data = ros::Time(0);
   m_dDead_line.data= ros::Duration(0);
 }
-  
+  CStockage(void)
+  :m_sName(""),m_sTopic_In("input"),m_sTopic_Out,m_bState(false)
+{
+  m_tTps_Reception.data = ros::Time(0);
+  m_dDead_line.data= ros::Duration(0);
+}
 ~CStockage(void)
 {
 }
@@ -22,13 +27,15 @@ void subscribe()
 
 void repub(void)
 {
+  //TODO Réecrire pour le message complet
   this->m_pubEch.publish(m_tTps_Reception);
 }
 
 void transmission(void)
 {
+  //TODO adapter au vrai message
   m_pubEch = g_node->advertise<std_msgs::Time>(m_sTopic_Out, 1000);
-
+  
   ros::Rate loop_rate(1000);
 
   while (ros::ok())
