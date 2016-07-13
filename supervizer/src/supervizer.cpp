@@ -62,13 +62,13 @@ void reception(ros::NodeHandle* pN)
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "supervizer");
-  
+  CStockage S1("Yolo","input", "output");
+  S1.subscribe();
+
   ros::NodeHandle n;
   g_node = &n;
   reception(&n);
- 
- 
-
+  ros::spin();
 
   return 0;
 }
