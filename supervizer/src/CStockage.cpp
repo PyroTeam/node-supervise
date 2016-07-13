@@ -1,40 +1,41 @@
-#include "supervizer.h"
+#include "CStockage.h"
 
-CStockage(void)
-  :m_sName(""),m_sTopic_In("input"),m_sTopic_Out,m_bState(false)
+CStockage::CStockage(void)
+  :m_sName("default"),m_sTopic_In("input"),m_sTopic_Out("output"),m_bState(false)
 {
   m_tTps_Reception.data = ros::Time(0);
-  m_dDead_line.data= ros::Duration(0);
+  m_dDead_line.data= ros::Duration(60);
 }
-  CStockage(void)
-  :m_sName(""),m_sTopic_In("input"),m_sTopic_Out,m_bState(false)
+  CStockage::CStockage(string sName, string sTopic_In, string sTopic_Out)
+  :m_sName(sName),m_sTopic_In(sTopic_In),m_sTopic_Out(sTopic_Out),m_bState(false)
 {
-  m_tTps_Reception.data = ros::Time(0);
-  m_dDead_line.data= ros::Duration(0);
+  m_tTps_Reception  .data = ros::Time::now();
+  m_dDead_line.data= ros::Duration(60);
 }
-~CStockage(void)
+CStockage::~CStockage(void)
 {
 }
 
-void callback(const std_msgs::Time &msg)
+void CStockage::callback(const std_msgs::Time &msg)
 {
+  //TODO Adapter aux echanges complets
   ROS_INFO_STREAM("Temps :"<<this->m_tTps_Reception);
 }
-void subscribe()
+void CStockage::subscribe()
 {
-  m_subEch = g_node->subscribe(m_sTopic_In, 10, &CStockage::callback,this);
+  m_subEch = m_nohNode.subscribe(m_sTopic_In, 10, &CStockage::callback,this);
 }
 
-void repub(void)
+void CStockage::repub(void)
 {
   //TODO Réecrire pour le message complet
   this->m_pubEch.publish(m_tTps_Reception);
 }
 
-void transmission(void)
+void CStockage::transmission(void)
 {
   //TODO adapter au vrai message
-  m_pubEch = g_node->advertise<std_msgs::Time>(m_sTopic_Out, 1000);
+  m_pubEch = m_nohNode.advertise<std_msgs::Time>(m_sTopic_Out, 1000);
   
   ros::Rate loop_rate(1000);
 

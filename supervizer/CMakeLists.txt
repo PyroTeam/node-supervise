@@ -190,9 +190,17 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include 
+  
+  
+  ${catkin_INCLUDE_DIRS})
 
-add_executable(supervizer src/supervizer.cpp)
+add_executable(supervizer 
+        src/supervizer.cpp
+        src/CStockage.cpp
+        )
 target_link_libraries(supervizer ${catkin_LIBRARIES})
 add_dependencies(supervizer supervizer_generate_messages_cpp)
+
+
 

@@ -1,3 +1,9 @@
+
+#ifndef CSTOCKAGE
+#define CSTOCKAGE
+
+
+
 #include "ros/ros.h"
 #include "supervizer/beacon.h"
 #include "std_msgs/Time.h"
@@ -7,8 +13,6 @@
 
 #include <sstream>
 using std::string;
-using std::vector;
-using namespace topic_tools;
 
 class CStockage{
  private:
@@ -22,10 +26,12 @@ class CStockage{
   
  public:
   CStockage(void);
-  CStockage(string, string, );
+  CStockage(string, string, string);
   ~CStockage(void);
-  void callback(const std_msgs::Time);
+  void callback(const std_msgs::Time&);
   void subscribe(void);
   void transmission(void);
   void repub(void);
 };
+
+#endif
