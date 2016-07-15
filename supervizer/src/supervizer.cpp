@@ -50,7 +50,8 @@ std_msgs::String
 */
   void chatterCallback(const supervizer::beacon::ConstPtr& msg)
 {
-  ROS_INFO("I heard: [%s] [%s] [%d] [%f] [%f]", msg->name.c_str(), msg->data_topic.c_str(), msg->state, msg->r_time.toSec(),msg->dead_line.toSec());
+  ROS_INFO("I heard: [%s] [%s] [%d] [%f] [%f]", msg->name.c_str(), msg->data_topic.c_str(),
+   msg->state, msg->r_time.toSec(),msg->dead_line.toSec());
 }
 void reception(ros::NodeHandle* pN)
 {
@@ -63,8 +64,8 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "supervizer");
   CStockage S1("Yolo","input", "output");
-  S1.subscribe();
-
+  S1.subscribe(); // lance la souscription au topic input lié lors de la construction de l'objet
+  //TODO gestion des vecteurs, reception du beacon et redirect
   ros::NodeHandle n;
   g_node = &n;
   reception(&n);

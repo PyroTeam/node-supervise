@@ -202,5 +202,10 @@ add_executable(supervizer
 target_link_libraries(supervizer ${catkin_LIBRARIES})
 add_dependencies(supervizer supervizer_generate_messages_cpp)
 
+add_executable(node_test 
+        src/node_test.cpp
+        )
+target_link_libraries(node_test ${catkin_LIBRARIES})
+add_dependencies(node_test supervizer_generate_messages_cpp)
 
 
