@@ -1,5 +1,6 @@
 string name
 time r_time
 int8 state
-string data_topic
+string In_topic
+string Out_topic
 duration dead_line
