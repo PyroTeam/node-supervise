@@ -26,12 +26,16 @@ class CStockage{
   
  public:
   CStockage(void);
-  CStockage(string, string, string);
+  CStockage(string, string, string, ros::Time, ros::Duration);
   ~CStockage(void);
   void callback(const std_msgs::Time&);
   void subscribe(void);
   void transmission(void);
   void repub(void);
+  void setTime(ros::Time temps){m_tTps_Reception = temps};
+  void setDuration(ros::Duration dur){m_dDead_line = dur};
+  void setState(bool etat){m_bState = etat};
+
 };
 
 #endif

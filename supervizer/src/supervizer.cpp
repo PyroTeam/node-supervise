@@ -12,9 +12,11 @@ using std::string;
 using std::vector;
 using namespace topic_tools;
 
+std::vector<CStockage> g_tab_nodes;
 ros::NodeHandle* g_node;
 
 /*
+***** Le superviseur ne publie rien de lui meme ******
 void transmission(void)
 {
    ros::Publisher chatter_pub = n.advertise<supervizer::beacon>("chatter", 1000);
@@ -50,26 +52,54 @@ std_msgs::String
 */
   void chatterCallback(const supervizer::beacon::ConstPtr& msg)
 {
-  ROS_INFO("I heard: [%s] [%s] [%d] [%f] [%f]", msg->name.c_str(), msg->data_topic.c_str(),
-   msg->state, msg->r_time.toSec(),msg->dead_line.toSec());
+  ROS_INFO("I heard: [%s] [%s]  [%s] [%d] [%f] [%f]", msg->name.c_str(), msg->In_topic.c_str(),
+   msg->Out_topic.c_str, msg->state, msg->r_time.toSec(),msg->dead_line.toSec());
+
+  if(g_tab_nodes.size() != 0)
+  {
+    int taille = g_tab_nodes.size(),i=0;
+    while(i<taille-1 && g_tab_nodes[taille].name != msg->name)
+    {
+      i++;
+    }
+
+
+    if(g_tab_nodes[taille].name == msg->name)
+    {
+      g_tab_nodes[taille].setTime(msg->r_time);
+      g_tab_nodes[taille].setDuration(msg->dead_line);
+      g_tab_nodes[taille].setState(msg->state);
+    }
+    else
+    {
+      g_tab_nodes.push_back(CStockage(msg->name.c_str,msg->Out_topic.c_str, msg->In_topic.c_str,
+      msg->r_time, msg->dead_line));
+    } 
+  }
+  else
+  {
+    g_tab_nodes.push_back(CStockage(msg->name.c_str,msg->Out_topic.c_str, msg->In_topic.c_str,
+    msg->r_time, msg->dead_line));
+  }  
+
 }
 void reception(ros::NodeHandle* pN)
 {
   ros::Subscriber sub = pN->subscribe("beacon", 10, chatterCallback);
-  ros::spin();
+ 
 
   
 }
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "supervizer");
-  CStockage S1("Yolo","input", "output");
-  S1.subscribe(); // lance la souscription au topic input lié lors de la construction de l'objet
-  //TODO gestion des vecteurs, reception du beacon et redirect
+  
   ros::NodeHandle n;
   g_node = &n;
-  reception(&n);
-  ros::spin();
-
+  while(ros::ok())
+  {
+    reception(&n);
+    ros::spinOnce();
+  }
   return 0;
 }

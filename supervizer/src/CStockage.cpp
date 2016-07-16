@@ -6,11 +6,12 @@ CStockage::CStockage(void)
   m_tTps_Reception.data = ros::Time(0);
   m_dDead_line.data= ros::Duration(60);
 }
-  CStockage::CStockage(string sName, string sTopic_In, string sTopic_Out)
+  CStockage::CStockage(string sName, string sTopic_In, string sTopic_Out, ros::Time temps = ros::Time::now(), ros::Duration dead_line = ros::Duration(60))
   :m_sName(sName),m_sTopic_In(sTopic_In),m_sTopic_Out(sTopic_Out),m_bState(false)
 {
-  m_tTps_Reception  .data = ros::Time::now();
+  m_tTps_Reception.data = ros::Time::now();
   m_dDead_line.data= ros::Duration(60);
+  this->subscribe();
 }
 CStockage::~CStockage(void)
 {
