@@ -7,11 +7,12 @@
 #include "topic_tools/parse.h"
 #include "CStockage.h"
 
+#include "stdio.h"
 #include <sstream>
 using std::string;
 using std::vector;
 using namespace topic_tools;
-
+using namespace std;
 std::vector<CStockage> g_tab_nodes;
 ros::NodeHandle* g_node;
 
@@ -52,19 +53,19 @@ std_msgs::String
 */
   void chatterCallback(const supervizer::beacon::ConstPtr& msg)
 {
-  ROS_INFO("I heard: [%s] [%s]  [%s] [%d] [%f] [%f]", msg->name.c_str(), msg->In_topic.c_str(),
-   msg->Out_topic.c_str, msg->state, msg->r_time.toSec(),msg->dead_line.toSec());
+  ROS_INFO_STREAM("I heard: "<< msg->name.c_str() <<" " << msg->In_topic.c_str() << " "
+   << msg->Out_topic.c_str()<< " " << msg->state<< " "<<msg->r_time.toSec()<< " " << msg->dead_line.toSec()<<endl);
 
   if(g_tab_nodes.size() != 0)
   {
     int taille = g_tab_nodes.size(),i=0;
-    while(i<taille-1 && g_tab_nodes[taille].name != msg->name)
+    while(i<taille-1 && g_tab_nodes[taille].getName() != msg->name.c_str())
     {
       i++;
     }
 
 
-    if(g_tab_nodes[taille].name == msg->name)
+    if(g_tab_nodes[taille].getName() == msg->name.c_str())
     {
       g_tab_nodes[taille].setTime(msg->r_time);
       g_tab_nodes[taille].setDuration(msg->dead_line);
@@ -72,14 +73,15 @@ std_msgs::String
     }
     else
     {
-      g_tab_nodes.push_back(CStockage(msg->name.c_str,msg->Out_topic.c_str, msg->In_topic.c_str,
-      msg->r_time, msg->dead_line));
+      CStockage S1(msg->name.c_str(),msg->Out_topic.c_str(), msg->In_topic.c_str(),msg->r_time, msg->dead_line);
+      g_tab_nodes.push_back(S1);
     } 
   }
   else
   {
-    g_tab_nodes.push_back(CStockage(msg->name.c_str,msg->Out_topic.c_str, msg->In_topic.c_str,
-    msg->r_time, msg->dead_line));
+    CStockage S2 (msg->name.c_str(),msg->Out_topic.c_str(), msg->In_topic.c_str(),
+    msg->r_time, msg->dead_line);
+    g_tab_nodes.push_back(S2);
   }  
 
 }

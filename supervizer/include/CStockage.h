@@ -32,9 +32,14 @@ class CStockage{
   void subscribe(void);
   void transmission(void);
   void repub(void);
-  void setTime(ros::Time temps){m_tTps_Reception = temps};
-  void setDuration(ros::Duration dur){m_dDead_line = dur};
-  void setState(bool etat){m_bState = etat};
+
+  void setTime(ros::Time temps){m_tTps_Reception.data = temps;};
+  void setDuration(ros::Duration dur){m_dDead_line.data = dur;};
+  void setState(bool etat){m_bState = etat;};
+
+  ros::Time getTime(void){return m_tTps_Reception.data;};
+  ros::Duration getDuration(void){return m_dDead_line.data;};
+  std::string getName(void){return m_sName;};
 
 };
 

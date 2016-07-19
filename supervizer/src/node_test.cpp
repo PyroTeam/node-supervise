@@ -18,7 +18,9 @@ void transmission_stockage(void)
 
   ros::Publisher chatter_pub = g_nhNode->advertise<std_msgs::Time>(g_sNomOut, 1000);
   ROS_INFO_STREAM("Send time : " <<ros::Time::now());
-  chatter_pub.publish(ros::Time::now());
+  std_msgs::Time msg;
+  msg.data = ros::Time::now();
+  chatter_pub.publish(msg);
 }     
 
 void transmission_beacon(void)
@@ -30,7 +32,7 @@ void transmission_beacon(void)
   msg.state = true;
   msg.In_topic = g_sNomIn;
   msg.Out_topic = g_sNomOut;
-  msg.dead_line = ros::Duration(60)
+  msg.dead_line = ros::Duration(60);
   /*
       Pour l'instant usage de deux string pour les noms de topics avant normalisations
       string name
@@ -40,9 +42,10 @@ void transmission_beacon(void)
       string Out_topic
       duration dead_line
   */
-  ROS_INFO_STREAM("Send beacon :"<<msg.name <<endl<< "Time: " <<ros::Time::now() << endl <<
-    "Etat :"<< msg.state << endl << "Topic d'entrée : "<< msg.In_topic << endl <<
-    "Topic de sortie : " << msg.Out_topic <<endl << "Latence : "<< msg.dead_line);
+  ros::Time now = ros ::Time::now();
+  ROS_INFO_STREAM("Send beacon :"<<msg.name <<endl<< "Time: " <<ros::Time::now() << endl
+   <<    "Etat :"<< msg.state << endl << "Topic d'entrée : "<< msg.In_topic << endl
+    <<"Topic de sortie : " << msg.Out_topic <<endl << "Latence : "<< msg.dead_line);
   chatter_pub.publish(msg);
 }     
 
@@ -61,10 +64,10 @@ void reception(ros::NodeHandle* pN)
 }
 int main(int argc, char **argv)
   {
-    g_sNomNode = "node_test"
+    g_sNomNode = "node_test";
     g_sNomOut = "Out_nt";
     g_sNomIn ="In_nt";
-    ros::init(argc, argv, g_sNomNode_);
+    ros::init(argc, argv, g_sNomNode);
     //TODO envoie et receptions de données
 
     ros::NodeHandle n;
@@ -75,7 +78,7 @@ int main(int argc, char **argv)
 
     while (ros::ok())
       {
-        transmission_beacon
+        transmission_beacon();
         transmission_stockage();
         ros::spinOnce();
         loop_rate.sleep();
