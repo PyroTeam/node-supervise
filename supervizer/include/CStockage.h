@@ -26,7 +26,7 @@ class CStockage{
   
  public:
   CStockage(void);
-  CStockage(string, string, string, ros::Time, ros::Duration);
+  CStockage(string, string, string, ros::Time , ros::Duration);
   ~CStockage(void);
   void callback(const std_msgs::Time&);
   void subscribe(void);

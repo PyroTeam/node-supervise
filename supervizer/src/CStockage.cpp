@@ -12,6 +12,7 @@ CStockage::CStockage(void)
   m_tTps_Reception.data = temps;
   m_dDead_line.data= dead_line;
   this->subscribe();
+  m_pubEch = m_nohNode.advertise<std_msgs::Time>(m_sTopic_Out, 1000);
 }
 CStockage::~CStockage(void)
 {
@@ -20,7 +21,9 @@ CStockage::~CStockage(void)
 void CStockage::callback(const std_msgs::Time &msg)
 {
   //TODO Adapter aux echanges complets
-  ROS_INFO_STREAM("Temps :"<<this->m_tTps_Reception);
+
+  ROS_INFO_STREAM("Temps :"<<m_tTps_Reception.data);
+
 }
 void CStockage::subscribe()
 {
@@ -36,7 +39,7 @@ void CStockage::repub(void)
 void CStockage::transmission(void)
 {
   //TODO adapter au vrai message
-  m_pubEch = m_nohNode.advertise<std_msgs::Time>(m_sTopic_Out, 1000);
+ 
   
   ros::Rate loop_rate(1000);
 

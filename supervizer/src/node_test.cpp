@@ -10,23 +10,25 @@ using std::string;
 using std::vector;
 using namespace std;
 
-
+ros::Publisher beacon_pub ;
+ros::Publisher stockage_pub ;
+ 
 std::string g_sNomNode, g_sNomIn, g_sNomOut;
 ros::NodeHandle* g_nhNode;
 void transmission_stockage(void)
 {
 
-  ros::Publisher chatter_pub = g_nhNode->advertise<std_msgs::Time>(g_sNomOut, 1000);
-  ROS_INFO_STREAM("Send time : " <<ros::Time::now());
+  
   std_msgs::Time msg;
   msg.data = ros::Time::now();
-  chatter_pub.publish(msg);
+  stockage_pub.publish(msg);
+  ROS_INFO_STREAM("Send time : " <<msg.data);
+
 }     
 
 void transmission_beacon(void)
 {
   supervizer::beacon msg;
-  ros::Publisher chatter_pub = g_nhNode->advertise<std_msgs::Time>("beacon", 1000);
   msg.name = g_sNomNode;
   msg.r_time = ros::Time::now();
   msg.state = true;
@@ -44,9 +46,9 @@ void transmission_beacon(void)
   */
   ros::Time now = ros ::Time::now();
   ROS_INFO_STREAM("Send beacon :"<<msg.name <<endl<< "Time: " <<ros::Time::now() << endl
-   <<    "Etat :"<< msg.state << endl << "Topic d'entrée : "<< msg.In_topic << endl
+   <<    "Etat :"<< (msg.state?"Actif!":"Idle!") << endl << "Topic d'entrée : "<< msg.In_topic << endl
     <<"Topic de sortie : " << msg.Out_topic <<endl << "Latence : "<< msg.dead_line);
-  chatter_pub.publish(msg);
+  beacon_pub.publish(msg);
 }     
 
   void chatterCallback(const std_msgs::Time &msg)
@@ -55,13 +57,7 @@ void transmission_beacon(void)
   ROS_INFO_STREAM("Temps :"<<msg.data);
 }
 
-void reception(ros::NodeHandle* pN)
-{
-  ros::Subscriber sub = pN->subscribe(g_sNomIn, 10, chatterCallback);
-  ros::spin();
 
-  
-}
 int main(int argc, char **argv)
   {
     g_sNomNode = "node_test";
@@ -69,12 +65,15 @@ int main(int argc, char **argv)
     g_sNomIn ="In_nt";
     ros::init(argc, argv, g_sNomNode);
     //TODO envoie et receptions de données
-
+    
     ros::NodeHandle n;
     g_nhNode = &n;
-    reception(&n);
-
-    ros::Rate loop_rate(10);
+    beacon_pub = g_nhNode->advertise<supervizer::beacon>("beacon", 1000);
+    stockage_pub = g_nhNode->advertise<std_msgs::Time>(g_sNomOut, 1000);
+ 
+     ros::Subscriber sub = g_nhNode->subscribe(g_sNomIn, 10, chatterCallback);
+    
+    ros::Rate loop_rate(1);
 
     while (ros::ok())
       {

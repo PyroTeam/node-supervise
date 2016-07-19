@@ -54,22 +54,22 @@ std_msgs::String
   void chatterCallback(const supervizer::beacon::ConstPtr& msg)
 {
   ROS_INFO_STREAM("I heard: "<< msg->name.c_str() <<" " << msg->In_topic.c_str() << " "
-   << msg->Out_topic.c_str()<< " " << msg->state<< " "<<msg->r_time.toSec()<< " " << msg->dead_line.toSec()<<endl);
+   << msg->Out_topic.c_str()<< " " << (msg->state?"Actif!":"Idle!")<< " "<<msg->r_time.toSec()<< " " << msg->dead_line.toSec()<<endl);
 
   if(g_tab_nodes.size() != 0)
   {
     int taille = g_tab_nodes.size(),i=0;
-    while(i<taille-1 && g_tab_nodes[taille].getName() != msg->name.c_str())
+    while(i<taille-1 && g_tab_nodes[i].getName() != msg->name.c_str())
     {
       i++;
     }
 
 
-    if(g_tab_nodes[taille].getName() == msg->name.c_str())
+    if(g_tab_nodes[i].getName() == msg->name.c_str())
     {
-      g_tab_nodes[taille].setTime(msg->r_time);
-      g_tab_nodes[taille].setDuration(msg->dead_line);
-      g_tab_nodes[taille].setState(msg->state);
+      g_tab_nodes[i].setTime(msg->r_time);
+      g_tab_nodes[i].setDuration(msg->dead_line);
+      g_tab_nodes[i].setState(msg->state);
     }
     else
     {
@@ -85,22 +85,28 @@ std_msgs::String
   }  
 
 }
-void reception(ros::NodeHandle* pN)
-{
-  ros::Subscriber sub = pN->subscribe("beacon", 10, chatterCallback);
- 
 
-  
-}
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "supervizer");
   
   ros::NodeHandle n;
   g_node = &n;
+  ros::Subscriber sub = g_node->subscribe("beacon", 10, chatterCallback);
+ 
   while(ros::ok())
   {
-    reception(&n);
+    ros::Rate loop_rate(1);
+    if(g_tab_nodes.size() != 0)
+    {
+      int taille = g_tab_nodes.size(),i=0;
+      ROS_INFO("Taille vecteur : %d", taille);
+      {
+        g_tab_nodes[i].repub();
+        i++;
+      }
+    }
+    loop_rate.sleep();
     ros::spinOnce();
   }
   return 0;
