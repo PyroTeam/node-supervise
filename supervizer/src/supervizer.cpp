@@ -13,7 +13,7 @@ using std::string;
 using std::vector;
 using namespace topic_tools;
 using namespace std;
-std::vector<CStockage> g_tab_nodes;
+std::vector<CStockage*> g_tab_nodes;
 ros::NodeHandle* g_node;
 
 /*
@@ -51,38 +51,45 @@ std_msgs::String
     }
 }
 */
-  void chatterCallback(const supervizer::beacon::ConstPtr& msg)
+  void beaconCallback(const supervizer::beacon::ConstPtr& msg)
 {
-  ROS_INFO_STREAM("I heard: "<< msg->name.c_str() <<" " << msg->In_topic.c_str() << " "
+  ROS_INFO_STREAM("I heard: "<< msg->name.c_str() <<" " << msg->In_topic.c_str() << endl
    << msg->Out_topic.c_str()<< " " << (msg->state?"Actif!":"Idle!")<< " "<<msg->r_time.toSec()<< " " << msg->dead_line.toSec()<<endl);
-
-  if(g_tab_nodes.size() != 0)
+  int taille = g_tab_nodes.size(),i=0;
+  bool research = false;
+  while(research == false)
   {
-    int taille = g_tab_nodes.size(),i=0;
-    while(i<taille-1 && g_tab_nodes[i].getName() != msg->name.c_str())
+    if(g_tab_nodes.size() != 0 && g_tab_nodes[i]->getName() == msg->name.c_str())
     {
+      ROS_INFO("Modification");
+      g_tab_nodes[i]->setTime(msg->r_time);
+      ROS_INFO_STREAM("Temps enregistré " << g_tab_nodes[i]->getTime());
+      g_tab_nodes[i]->setDuration(msg->dead_line);
+      g_tab_nodes[i]->setState(msg->state);
+
+      ROS_INFO_STREAM("Ici on gere" << g_tab_nodes[i]->getName());
+      research = true;
+    }
+    else if(g_tab_nodes.size()!= 0 && g_tab_nodes[i]->getName() != msg->name.c_str())
+    {
+      ROS_INFO("Test ++");
       i++;
     }
-
-
-    if(g_tab_nodes[i].getName() == msg->name.c_str())
+    else if (g_tab_nodes.size() == 0  || i>=taille)
     {
-      g_tab_nodes[i].setTime(msg->r_time);
-      g_tab_nodes[i].setDuration(msg->dead_line);
-      g_tab_nodes[i].setState(msg->state);
+      ROS_INFO("Ajout");
+      CStockage* S2 = new CStockage(msg->name.c_str(),msg->Out_topic.c_str(), msg->In_topic.c_str(),
+      msg->r_time, msg->dead_line, g_node);
+      g_tab_nodes.push_back(S2);
+      research = true;
+
     }
-    else
+    else 
     {
-      CStockage S1(msg->name.c_str(),msg->Out_topic.c_str(), msg->In_topic.c_str(),msg->r_time, msg->dead_line);
-      g_tab_nodes.push_back(S1);
-    } 
+      ROS_INFO("Error IF beacon callBack out of range");
+    }
   }
-  else
-  {
-    CStockage S2 (msg->name.c_str(),msg->Out_topic.c_str(), msg->In_topic.c_str(),
-    msg->r_time, msg->dead_line);
-    g_tab_nodes.push_back(S2);
-  }  
+   
 
 }
 
@@ -92,7 +99,7 @@ int main(int argc, char **argv)
   
   ros::NodeHandle n;
   g_node = &n;
-  ros::Subscriber sub = g_node->subscribe("beacon", 10, chatterCallback);
+  ros::Subscriber sub = g_node->subscribe("beacon", 10, beaconCallback);
  
   while(ros::ok())
   {
@@ -102,12 +109,18 @@ int main(int argc, char **argv)
       int taille = g_tab_nodes.size(),i=0;
       ROS_INFO("Taille vecteur : %d", taille);
       {
-        g_tab_nodes[i].repub();
+        g_tab_nodes[i]->repub();
         i++;
       }
     }
     loop_rate.sleep();
     ros::spinOnce();
+  }
+  while(g_tab_nodes.size()!=0)
+  {
+    delete(g_tab_nodes[g_tab_nodes.size()-1]);
+    g_tab_nodes.pop_back();
+
   }
   return 0;
 }
