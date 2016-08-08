@@ -209,3 +209,8 @@ target_link_libraries(node_test ${catkin_LIBRARIES})
 add_dependencies(node_test supervizer_generate_messages_cpp)
 
 
+add_executable(deuxio 
+        src/deuxio.cpp
+        )
+target_link_libraries(deuxio ${catkin_LIBRARIES})
+add_dependencies(deuxio supervizer_generate_messages_cpp)

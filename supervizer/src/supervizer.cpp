@@ -70,7 +70,7 @@ std_msgs::String
       ROS_INFO_STREAM("Ici on gere" << g_tab_nodes[i]->getName());
       research = true;
     }
-    else if(g_tab_nodes.size()!= 0 && g_tab_nodes[i]->getName() != msg->name.c_str())
+    else if(g_tab_nodes.size()!= 0 && i<taille && g_tab_nodes[i]->getName() != msg->name.c_str())
     {
       ROS_INFO("Test ++");
       i++;
